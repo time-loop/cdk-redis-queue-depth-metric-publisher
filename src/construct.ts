@@ -21,9 +21,9 @@ export interface RedisQueueDepthMetricPublisherProps {
   readonly cwNamespace?: string;
   /**
    * Time intervals that Lambda will be triggered to publish metric in CloudWatch.
-   * @default 1
+   * @default Duration.minutes(1)
    */
-  readonly publishFrequency?: number;
+  readonly publishFrequency?: Duration;
   /**
    * List of queues to measure depth for.
    */
@@ -81,7 +81,7 @@ export interface RedisQueueDepthMetricPublisherProps {
  * A construct that creates an AWS Lambda function to publish ENI usage metrics to CloudWatch.
  */
 export class RedisQueueDepthMetricPublisher extends Construct {
-  readonly publishFrequency: number;
+  readonly publishFrequency: Duration;
   readonly regions: string[];
   readonly handler: NodejsFunction;
   readonly rule: Rule;
@@ -96,7 +96,7 @@ export class RedisQueueDepthMetricPublisher extends Construct {
 
   constructor(scope: Construct, id: Namer, props: RedisQueueDepthMetricPublisherProps) {
     super(scope, id.pascal);
-    this.publishFrequency = props.publishFrequency ?? 1;
+    this.publishFrequency = props.publishFrequency ?? Duration.minutes(1);
     this.cwNamespace = props.cwNamespace ?? 'RedisQueueDepth';
     const myConstruct = this;
 
@@ -149,7 +149,7 @@ export class RedisQueueDepthMetricPublisher extends Construct {
       .addEnvironment('REDIS_SECRET_USERNAME_PATH', props.redisSecretUsernamePath ?? 'username')
 
     this.rule = new Rule(this, 'rule', {
-      schedule: Schedule.rate(Duration.minutes(this.publishFrequency)),
+      schedule: Schedule.rate(this.publishFrequency),
     });
     this.rule.addTarget(new LambdaFunction(this.handler));
   }
