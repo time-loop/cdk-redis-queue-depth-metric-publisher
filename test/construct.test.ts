@@ -1,5 +1,6 @@
-import { App, Stack } from 'aws-cdk-lib';
+import { App, Duration, Stack } from 'aws-cdk-lib';
 import { Template } from 'aws-cdk-lib/assertions';
+import { RetentionDays } from 'aws-cdk-lib/aws-logs';
 import { Namer } from 'multi-convention-namer';
 import { RedisQueueDepthMetricPublisher, RedisQueueDepthMetricPublisherProps } from '../src/construct';
 
@@ -14,7 +15,8 @@ beforeEach(() => {
 let template: Template;
 const defaultRedisQueueDepthMetricPublisherProps: RedisQueueDepthMetricPublisherProps = {
   cwNamespace: 'example',
-  cloudwatchLogsRetention: 7,
+  cloudwatchLogsRetention: RetentionDays.TWO_WEEKS,
+  publishFrequency: Duration.seconds(5),
   queues: ['fakeQueue', 'fakeQueue2'],
   redisAddr: 'fakeRedisAddr',
   redisPort: '123456',
