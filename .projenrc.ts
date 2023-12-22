@@ -1,19 +1,24 @@
 import { clickupCdk } from '@time-loop/clickup-projen';
+
+const name = 'cdk-lambda-eni-usage-metric-publisher';
 const project = new clickupCdk.ClickUpCdkConstructLibrary({
-  author: 'jose-clickup',
-  authorAddress: 'jamoroso@clickup.com',
-  cdkVersion: '2.99.0',
+  author: 'Andrew Hammond',
+  authorAddress: 'ahammond@clickup.com',
+  cdkVersion: '2.107.0',
   defaultReleaseBranch: 'main',
-  devDeps: ['@time-loop/clickup-projen', '@aws-cdk/integ-tests-alpha', 'aws-sdk-mock'],
+  devDeps: ['@types/aws-lambda', '@time-loop/clickup-projen', '@aws-cdk/integ-tests-alpha'],
   jsiiVersion: '~5.0.0',
-  name: 'cdk-lambda-eni-usage-metric-publisher',
+  name,
   projenrcTs: true,
-  repositoryUrl: 'https://github.com/time-loop/cdk-lambda-eni-usage-metric-publisher.git',
+  repositoryUrl: `https://github.com/time-loop/${name}.git`,
   gitignore: ['.vscode/**'],
-  bundledDeps: ['aws-sdk'],
+  bundledDeps: [
+    '@aws-lambda-powertools/metrics',
+    '@aws-lambda-powertools/parameters',
+    '@aws-sdk/client-ssm', // Might not need this. Will we be pulling from SSM in lambda?
+    '@aws-sdk/client-secrets-manager',
+    'ioredis',
+  ],
   peerDeps: ['multi-convention-namer'],
-  // deps: [] /* Runtime dependencies of this module. */,
-  // description: undefined,  /* The description is just a string that helps people understand the purpose of the package. */
-  // packageName: undefined,  /* The "name" in package.json. */
 });
 project.synth();
