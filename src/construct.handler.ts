@@ -1,15 +1,12 @@
 import * as awsLambda from 'aws-lambda';
 
-
 import { getSecrets, getRedisConnection, getQueueDepth, publishMetrics } from './methods';
-
 
 export interface Result {
   region: string;
   vpcId: string;
   count: number;
 }
-
 
 export const handler = async () => {
   try {
@@ -27,12 +24,12 @@ export const handler = async () => {
       throw new Error('REDIS_PORT environment variable does not parseInt');
     }
 
-    // parse queues
-    const queuesBlob = process.env.QUEUES;
+    // parse queue names
+    const queuesBlob = process.env.QUEUE_NAMES;
     if (!queuesBlob) {
-      throw new Error('QUEUES environment variable not set');
+      throw new Error('QUEUE_NAMES environment variable not set');
     }
-    const queues: string[] = JSON.parse(queuesBlob);
+    const queueNames: string[] = JSON.parse(queuesBlob);
 
     // get username/password
     const redisSecretArn = process.env.REDIS_SECRET_ARN;
@@ -50,7 +47,11 @@ export const handler = async () => {
       throw new Error('REDIS_SECRET_USERNAME_PATH environment variable not set');
     }
 
-    const { username, password } = await getSecrets({redisSecretArn, redisSecretPasswordPath, redisSecretUsernamePath });
+    const { username, password } = await getSecrets({
+      redisSecretArn,
+      redisSecretPasswordPath,
+      redisSecretUsernamePath,
+    });
 
     // connect to redis instance, note this waits until the connection is 'ready'.
     const redisConnection = await getRedisConnection({
@@ -63,23 +64,23 @@ export const handler = async () => {
     });
 
     // capture the values for the queues
-    const results = await Promise.all(queues.map(async(queueName) => {
-      let depth = await getQueueDepth({redisConnection, queueName});
-      if(!depth) {
-        console.error(`Error fetching xlen for ${queueName}`);
-        depth = -1;
-      }
-      return {queueName, depth};
-    }));
+    const results = await Promise.all(
+      queueNames.map(async (queueName) => {
+        let depth = await getQueueDepth({ redisConnection, queueName });
+        if (!depth) {
+          console.error(`Error fetching queue depth for ${queueName}`);
+          depth = -1;
+        }
+        return { queueName, depth };
+      }),
+    );
 
-    if(results === undefined) {
+    if (results === undefined) {
       throw new Error('Error fetching ALL queue depths');
     }
 
     // publish the metrics
     publishMetrics(results);
-
-
   } catch (error) {
     console.error('Error publishing metric data', error);
     throw error;

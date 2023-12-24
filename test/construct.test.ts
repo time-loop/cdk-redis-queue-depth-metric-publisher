@@ -17,7 +17,7 @@ const defaultRedisQueueDepthMetricPublisherProps: RedisQueueDepthMetricPublisher
   cwNamespace: 'example',
   cloudwatchLogsRetention: RetentionDays.TWO_WEEKS,
   publishFrequency: Duration.seconds(5),
-  queues: ['fakeQueue', 'fakeQueue2'],
+  queueNames: ['fakeQueue', 'fakeQueue2'],
   redisAddr: 'fakeRedisAddr',
   redisPort: '123456',
   redisSecretArn: 'fakeRedisSecretArn',
@@ -39,14 +39,12 @@ function createRedisQueueDepthMetricPublisher(id: string, props?: RedisQueueDept
 describe.skip('RedisQueueDepthMetricPublisher', () => {
   it('creates resources', () => {
     createRedisQueueDepthMetricPublisher('defaultProps', defaultRedisQueueDepthMetricPublisherProps);
-    template.resourceCountIs('AWS::Lambda::Function', 2); // One 
+    template.resourceCountIs('AWS::Lambda::Function', 2); // One
     expect(redisQueueDepthMetricPublisher.publishFrequency).toEqual(1);
     expect(redisQueueDepthMetricPublisher.regions).toEqual(['us-east-1']);
   });
   it('creates resources with default props', () => {
-    createRedisQueueDepthMetricPublisher('noProps', {
-      
-    });
+    createRedisQueueDepthMetricPublisher('noProps');
     template.resourceCountIs('AWS::Lambda::Function', 2);
     expect(redisQueueDepthMetricPublisher.publishFrequency).toEqual(1);
     expect(redisQueueDepthMetricPublisher.regions).toEqual(['us-east-1']);

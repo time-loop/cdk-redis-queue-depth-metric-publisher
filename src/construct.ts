@@ -25,9 +25,9 @@ export interface RedisQueueDepthMetricPublisherProps {
    */
   readonly publishFrequency?: Duration;
   /**
-   * List of queues to measure depth for.
+   * List of queue names to measure depth for.
    */
-  readonly queues: string[];
+  readonly queueNames: string[];
   /**
    * Where is Redis?
    */
@@ -115,7 +115,7 @@ export class RedisQueueDepthMetricPublisher extends Construct {
     [
       new PolicyStatement({
         sid: 'fetchRedisSecret',
-        actions: ['WRITEME'],
+        actions: ['secretsmanager:GetSecretValue'],
         resources: [props.redisSecretArn],
       }),
       new PolicyStatement({
@@ -141,12 +141,12 @@ export class RedisQueueDepthMetricPublisher extends Construct {
     }
 
     this.handler
-      .addEnvironment('QUEUES', JSON.stringify(props.queues))
+      .addEnvironment('QUEUE_NAMES', JSON.stringify(props.queueNames))
       .addEnvironment('REDIS_ADDR', props.redisAddr)
       .addEnvironment('REDIS_PORT', props.redisPort ?? '6379')
       .addEnvironment('REDIS_SECRET_ARN', props.redisSecretArn)
       .addEnvironment('REDIS_SECRET_PASSWORD_PATH', props.redisSecretPasswordPath ?? 'password')
-      .addEnvironment('REDIS_SECRET_USERNAME_PATH', props.redisSecretUsernamePath ?? 'username')
+      .addEnvironment('REDIS_SECRET_USERNAME_PATH', props.redisSecretUsernamePath ?? 'username');
 
     this.rule = new Rule(this, 'rule', {
       schedule: Schedule.rate(this.publishFrequency),
