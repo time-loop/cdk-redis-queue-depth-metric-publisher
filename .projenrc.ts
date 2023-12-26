@@ -4,7 +4,7 @@ const name = 'cdk-lambda-eni-usage-metric-publisher';
 const project = new clickupCdk.ClickUpCdkConstructLibrary({
   author: 'Andrew Hammond',
   authorAddress: 'ahammond@clickup.com',
-  cdkVersion: '2.107.0',
+  cdkVersion: '2.87.0',
   defaultReleaseBranch: 'main',
   devDeps: ['@types/aws-lambda', '@time-loop/clickup-projen', '@aws-cdk/integ-tests-alpha'],
   jsiiVersion: '~5.0.0',

@@ -1,7 +1,7 @@
 import { Duration, Stack, aws_ec2 } from 'aws-cdk-lib';
 import { PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
-import { Runtime } from 'aws-cdk-lib/aws-lambda';
+import { Architecture, Runtime } from 'aws-cdk-lib/aws-lambda';
 import { Rule, Schedule } from 'aws-cdk-lib/aws-events';
 import { LambdaFunction } from 'aws-cdk-lib/aws-events-targets';
 import { RetentionDays } from 'aws-cdk-lib/aws-logs';
@@ -136,6 +136,7 @@ export class RedisQueueDepthMetricPublisher extends Construct {
       memorySize: 512,
       runtime: Runtime.NODEJS_18_X, // Should be at least node20, but let's be aggressive about this.
       timeout: Duration.seconds(45),
+      architecture: Architecture.ARM_64,
       ...(props.vpc ? { vpc: props.vpc } : {}),
     });
 
