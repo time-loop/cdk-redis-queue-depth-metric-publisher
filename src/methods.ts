@@ -73,16 +73,8 @@ export interface GetQueueDepthProps {
 }
 
 export async function getQueueDepth(props: GetQueueDepthProps): Promise<number> {
-  let count = 0;
-  let cursor = '0';
-
-  do {
-    const result = await props.redisConnection.scan(cursor, 'MATCH', `${props.queueName}*`, 'COUNT', '1000');
-    cursor = result[0];
-    count += result[1].length;
-  } while (cursor !== '0');
-
-  return count;
+  console.debug(`Getting queue depth for ${props.queueName}`);
+  return props.redisConnection.llen(props.queueName);
 }
 
 export interface PublishMetricsProps {}
@@ -93,24 +85,21 @@ export interface PublishMetricsPayload {
 export async function publishMetrics(payload: PublishMetricsPayload[], options?: MetricsOptions): Promise<void> {
   const metrics = new Metrics(options);
   payload.forEach((p) => {
-    if (p.depth >= 0) {
-      metrics.addMetric(p.queueName, MetricUnits.Count, p.depth);
-    }
+    metrics.addMetric(`queue_depth:${p.queueName}`, MetricUnits.Count, p.depth);
   });
   metrics.publishStoredMetrics();
-  return;
 }
 
-async function localTest() {
-  const conn = await getRedisConnection({
-    host: 'localhost',
-  });
-  const depth = await getQueueDepth({
-    redisConnection: conn,
-    queueName: 'NOTIFQUEUE:NOTIFQUEUE',
-  });
+// async function localTest() {
+//   const conn = await getRedisConnection({
+//     host: 'localhost',
+//   });
+//   const depth = await getQueueDepth({
+//     redisConnection: conn,
+//     queueName: 'NOTIFQUEUE:NOTIFQUEUE',
+//   });
 
-  console.log({ depth });
-}
+//   console.log({ depth });
+// }
 
 // localTest();

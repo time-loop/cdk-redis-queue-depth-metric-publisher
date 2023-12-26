@@ -1,5 +1,3 @@
-import * as awsLambda from 'aws-lambda';
-
 import { getSecrets, getRedisConnection, getQueueDepth, publishMetrics } from './methods';
 
 export interface Result {
@@ -24,18 +22,13 @@ export const handler = async () => {
       throw new Error('REDIS_PORT environment variable does not parseInt');
     }
 
-    // parse queue names
     const queuesBlob = process.env.QUEUE_NAMES;
     if (!queuesBlob) {
       throw new Error('QUEUE_NAMES environment variable not set');
     }
     const queueNames: string[] = JSON.parse(queuesBlob);
 
-    // get username/password
     const redisSecretArn = process.env.REDIS_SECRET_ARN;
-    if (!redisSecretArn) {
-      throw new Error('REDIS_SECRET_ARN environment variable not set');
-    }
 
     const redisSecretPasswordPath = process.env.REDIS_SECRET_PASSWORD_PATH;
     if (!redisSecretPasswordPath) {
@@ -47,31 +40,47 @@ export const handler = async () => {
       throw new Error('REDIS_SECRET_USERNAME_PATH environment variable not set');
     }
 
-    const { username, password } = await getSecrets({
-      redisSecretArn,
-      redisSecretPasswordPath,
-      redisSecretUsernamePath,
-    });
+    const cwService = process.env.CW_SERVICE;
+    if (!cwService) {
+      throw new Error('CW_SERVICE environment variable not set');
+    }
 
-    // connect to redis instance, note this waits until the connection is 'ready'.
-    const redisConnection = await getRedisConnection({
+    const cwNamespace = process.env.CW_NAMESPACE;
+    if (!cwNamespace) {
+      throw new Error('CW_NAMESPACE environment variable not set');
+    }
+
+    console.debug(`Connecting to redis at ${host}:${port}`);
+
+    const connectionOptions = {
       connectionName: 'queueDepthMetricPublisher',
       host,
       port,
-      username,
-      password,
-      tls: {}, // always use tls, but be easy about it.
-    });
+    } as any;
 
-    // capture the values for the queues
+    if (redisSecretArn) {
+      const { username, password } = await getSecrets({
+        redisSecretArn,
+        redisSecretPasswordPath,
+        redisSecretUsernamePath,
+      });
+      connectionOptions.username = username;
+      connectionOptions.password = password;
+    }
+
+    // connect to redis instance, note this waits until the connection is 'ready'.
+    const redisConnection = await getRedisConnection(connectionOptions);
+
+    // capture the depth of all queues
     const results = await Promise.all(
       queueNames.map(async (queueName) => {
-        let depth = await getQueueDepth({ redisConnection, queueName });
-        if (!depth) {
-          console.error(`Error fetching queue depth for ${queueName}`);
-          depth = -1;
+        try {
+          let depth = await getQueueDepth({ redisConnection, queueName });
+          return { queueName, depth };
+        } catch (error) {
+          console.error(`Error fetching queue depth for ${queueName}`, error);
         }
-        return { queueName, depth };
+        return { queueName, depth: -1 };
       }),
     );
 
@@ -79,8 +88,10 @@ export const handler = async () => {
       throw new Error('Error fetching ALL queue depths');
     }
 
-    // publish the metrics
-    publishMetrics(results);
+    publishMetrics(results, {
+      namespace: cwNamespace,
+      serviceName: cwService,
+    });
   } catch (error) {
     console.error('Error publishing metric data', error);
     throw error;
