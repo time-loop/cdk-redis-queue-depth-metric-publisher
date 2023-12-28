@@ -1,6 +1,6 @@
 import { clickupCdk } from '@time-loop/clickup-projen';
 
-const name = 'cdk-lambda-eni-usage-metric-publisher';
+const name = 'cdk-redis-queue-depth-metric-publisher';
 const project = new clickupCdk.ClickUpCdkConstructLibrary({
   author: 'Andrew Hammond',
   authorAddress: 'ahammond@clickup.com',
@@ -15,7 +15,6 @@ const project = new clickupCdk.ClickUpCdkConstructLibrary({
   bundledDeps: [
     '@aws-lambda-powertools/metrics',
     '@aws-lambda-powertools/parameters',
-    '@aws-sdk/client-ssm', // Might not need this. Will we be pulling from SSM in lambda?
     '@aws-sdk/client-secrets-manager',
     'ioredis',
   ],

@@ -1,8 +1,8 @@
 {
-  "name": "@time-loop/cdk-lambda-eni-usage-metric-publisher",
+  "name": "@time-loop/cdk-redis-queue-depth-metric-publisher",
   "repository": {
     "type": "git",
-    "url": "https://github.com/time-loop/cdk-lambda-eni-usage-metric-publisher.git"
+    "url": "https://github.com/time-loop/cdk-redis-queue-depth-metric-publisher.git"
   },
   "scripts": {
     "build": "npx projen build",
@@ -35,7 +35,7 @@
     "organization": true
   },
   "devDependencies": {
-    "@aws-cdk/integ-tests-alpha": "^2.99.1-alpha.0",
+    "@aws-cdk/integ-tests-alpha": "^2.87.0-alpha.0",
     "@time-loop/clickup-projen": "^0.0.181",
     "@types/aws-lambda": "^8.10.126",
     "@types/jest": "^29.5.6",
@@ -77,14 +77,12 @@
     "@aws-lambda-powertools/metrics": "^1.15.0",
     "@aws-lambda-powertools/parameters": "^1.15.0",
     "@aws-sdk/client-secrets-manager": "^3.451.0",
-    "@aws-sdk/client-ssm": "^3.451.0",
     "ioredis": "^5.3.2"
   },
   "bundledDependencies": [
     "@aws-lambda-powertools/metrics",
     "@aws-lambda-powertools/parameters",
     "@aws-sdk/client-secrets-manager",
-    "@aws-sdk/client-ssm",
     "ioredis"
   ],
   "keywords": [

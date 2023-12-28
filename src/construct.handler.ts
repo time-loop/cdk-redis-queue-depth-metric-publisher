@@ -88,7 +88,7 @@ export const handler = async () => {
       throw new Error('Error fetching ALL queue depths');
     }
 
-    publishMetrics(results, {
+    await publishMetrics(results, {
       namespace: cwNamespace,
       serviceName: cwService,
     });

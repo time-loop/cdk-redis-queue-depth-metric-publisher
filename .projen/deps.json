@@ -153,10 +153,6 @@
       "type": "bundled"
     },
     {
-      "name": "@aws-sdk/client-ssm",
-      "type": "bundled"
-    },
-    {
       "name": "ioredis",
       "type": "bundled"
     },

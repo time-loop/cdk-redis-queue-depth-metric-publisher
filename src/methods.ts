@@ -1,11 +1,11 @@
 // https://docs.powertools.aws.dev/lambda/typescript/latest/utilities/parameters/#fetching-secrets
+import { Metrics, MetricUnits } from '@aws-lambda-powertools/metrics';
+import { MetricsOptions } from '@aws-lambda-powertools/metrics/lib/types';
 import { getSecret } from '@aws-lambda-powertools/parameters/secrets';
 
 // https://docs.powertools.aws.dev/lambda/typescript/latest/core/metrics/#usage
-import { Metrics, MetricUnits } from '@aws-lambda-powertools/metrics';
 
 import { Redis, RedisOptions } from 'ioredis';
-import { MetricsOptions } from '@aws-lambda-powertools/metrics/lib/types';
 
 export interface GetSecretsProps {
   redisSecretArn: string;

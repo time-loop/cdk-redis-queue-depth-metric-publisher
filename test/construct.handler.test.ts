@@ -21,7 +21,7 @@ interface EnvVarTestCase {
 const defaultEnvVars: Record<string, any> = {
   REDIS_ADDR: 'fakeAddr',
   REDIS_PORT: '12345',
-  QUEUES: JSON.stringify(['fakeQueue']),
+  QUEUE_NAMES: JSON.stringify(['fakeQueue']),
   REDIS_SECRET_ARN: 'fakeArn',
   REDIS_SECRET_PASSWORD_PATH: 'fakePasswordPath',
   REDIS_SECRET_USERNAME_PATH: 'fakeUsernamePath',
@@ -49,7 +49,7 @@ describe('environment variable testing', () => {
       name: 'REDIS_ADDR',
       expectedError: 'REDIS_ADDR environment variable not set',
     },
-  ])('handler errors when required environment variable', ({ name, expectedError }) => {
+  ])('handler errors when required environment variable', async ({ name, expectedError }) => {
     // Mock in ALL the defaultEnvVars EXCEPT the one being tested
     Object.keys(defaultEnvVars).forEach((key) => {
       if (key === name) {
@@ -58,7 +58,7 @@ describe('environment variable testing', () => {
       process.env[key] = defaultEnvVars[key];
     });
 
-    expect(handler()).rejects.toThrow(expectedError);
+    await expect(handler()).rejects.toThrow(expectedError);
   });
 });
 
