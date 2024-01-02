@@ -1,11 +1,11 @@
 // https://docs.powertools.aws.dev/lambda/typescript/latest/utilities/parameters/#fetching-secrets
+import { Metrics, MetricUnits } from '@aws-lambda-powertools/metrics';
+import { MetricsOptions } from '@aws-lambda-powertools/metrics/lib/types';
 import { getSecret } from '@aws-lambda-powertools/parameters/secrets';
 
 // https://docs.powertools.aws.dev/lambda/typescript/latest/core/metrics/#usage
-import { Metrics, MetricUnits } from '@aws-lambda-powertools/metrics';
 
 import { Redis, RedisOptions } from 'ioredis';
-import { MetricsOptions } from '@aws-lambda-powertools/metrics/lib/types';
 
 export interface GetSecretsProps {
   redisSecretArn: string;
@@ -23,14 +23,9 @@ export async function getSecrets(props: GetSecretsProps): Promise<GetSecretsResp
   }
 
   return {
-    username: secret[props.redisSecretUsernamePath],
-    password: secret[props.redisSecretPasswordPath],
+    username: secret[props.redisSecretUsernamePath as keyof typeof secret],
+    password: secret[props.redisSecretPasswordPath as keyof typeof secret],
   };
-}
-
-function getCurrentTimeMs(): number {
-  const date = new Date();
-  return date.getTime();
 }
 
 export interface GetRedisConnectionProps extends RedisOptions {
@@ -49,51 +44,62 @@ export interface GetRedisConnectionProps extends RedisOptions {
  *
  * @example
  * const redis = await getRedisConnection({
- *   redisAddr: 'redis.example.com',
- *   redisPort: '6379',
+ *   host: 'redis.example.com',
+ *   port: 6379,
  *   username: 'XXXXXXXX',
  *   password: 'XXXXXXXX',
  * }
-*/
+ */
 export async function getRedisConnection(props: GetRedisConnectionProps): Promise<Redis> {
-  const r = await new Redis(props);
+  const redisConnection = new Redis(props);
 
   // Wait until it actually connects, or throw.
-  const timeout = getCurrentTimeMs() + (props.maxWaitForReadyMs ?? 1000);
-  while(r.status !== 'ready') {
-    if (getCurrentTimeMs() > timeout) {
-      throw new Error(`Timeout: Redis connection is ${r.status}, not 'ready'`);
+
+  const timeout = Date.now() + (props.maxWaitForReadyMs ?? 5000);
+  while (redisConnection.status !== 'ready') {
+    if (Date.now() > timeout) {
+      throw new Error(`Timeout: Redis connection is ${redisConnection.status}, not 'ready'`);
     }
-    console.debug(`Redis connection is ${r.status}, waiting...`);
-    await new Promise(resolve => setTimeout(resolve, 100));
+    console.debug(`Redis connection is ${redisConnection.status}, waiting...`);
+    await new Promise((resolve) => setTimeout(resolve, 100));
   }
 
-  return r;
+  return redisConnection;
 }
 
 export interface GetQueueDepthProps {
   redisConnection: Redis;
   queueName: string;
 }
-export async function getQueueDepth(props: GetQueueDepthProps): Promise<number> {
-  // TODO: validate this is what we're actually doing.
-  return await props.redisConnection.xlen(props.queueName);
-}
 
+export async function getQueueDepth(props: GetQueueDepthProps): Promise<number> {
+  console.debug(`Getting queue depth for ${props.queueName}`);
+  return props.redisConnection.llen(props.queueName);
+}
 
 export interface PublishMetricsProps {}
 export interface PublishMetricsPayload {
   queueName: string;
   depth: number;
 }
-export async function publishMetrics(payload: PublishMetricsPayload[], options?: MetricsOptions,): Promise<void> {
+export async function publishMetrics(payload: PublishMetricsPayload[], options?: MetricsOptions): Promise<void> {
   const metrics = new Metrics(options);
   payload.forEach((p) => {
-    if (p.depth >= 0) {
-     metrics.addMetric(p.queueName, MetricUnits.Count, p.depth)
-    }
+    metrics.addMetric(`queue_depth:${p.queueName}`, MetricUnits.Count, p.depth);
   });
-  await metrics.publishStoredMetrics();
-  return;
+  metrics.publishStoredMetrics();
 }
 
+// async function localTest() {
+//   const conn = await getRedisConnection({
+//     host: 'localhost',
+//   });
+//   const depth = await getQueueDepth({
+//     redisConnection: conn,
+//     queueName: 'NOTIFQUEUE:NOTIFQUEUE',
+//   });
+
+//   console.log({ depth });
+// }
+
+// localTest();

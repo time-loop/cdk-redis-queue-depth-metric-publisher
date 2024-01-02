@@ -1,4 +1,4 @@
-import { monitor } from '../src/construct.handler';
+import { handler } from '../src/construct.handler';
 
 // Silence log output
 (['log', 'error'] as jest.FunctionPropertyNames<Required<Console>>[]).forEach((func) =>
@@ -19,12 +19,12 @@ interface EnvVarTestCase {
 }
 
 const defaultEnvVars: Record<string, any> = {
-  'REDIS_ADDR': 'fakeAddr',
-  'REDIS_PORT': '12345',
-  'QUEUES': JSON.stringify(['fakeQueue']),
-  'REDIS_SECRET_ARN': 'fakeArn',
-  'REDIS_SECRET_PASSWORD_PATH': 'fakePasswordPath',
-  'REDIS_SECRET_USERNAME_PATH': 'fakeUsernamePath',
+  REDIS_ADDR: 'fakeAddr',
+  REDIS_PORT: '12345',
+  QUEUE_NAMES: JSON.stringify(['fakeQueue']),
+  REDIS_SECRET_ARN: 'fakeArn',
+  REDIS_SECRET_PASSWORD_PATH: 'fakePasswordPath',
+  REDIS_SECRET_USERNAME_PATH: 'fakeUsernamePath',
 };
 
 describe('environment variable testing', () => {
@@ -35,17 +35,21 @@ describe('environment variable testing', () => {
     Object.keys(defaultEnvVars).forEach((key) => delete env[key]);
   }
 
-  beforeAll(()=> {env = process.env});
+  beforeAll(() => {
+    env = process.env;
+  });
   beforeEach(cleanEnv);
   afterAll(() => {
     cleanEnv();
     process.env = env; // restore original env vars
   });
 
-  it.each<EnvVarTestCase>([{
+  it.each<EnvVarTestCase>([
+    {
       name: 'REDIS_ADDR',
       expectedError: 'REDIS_ADDR environment variable not set',
-  }])('monitor errors when required environment variable', ({name, expectedError}) => {
+    },
+  ])('handler errors when required environment variable', async ({ name, expectedError }) => {
     // Mock in ALL the defaultEnvVars EXCEPT the one being tested
     Object.keys(defaultEnvVars).forEach((key) => {
       if (key === name) {
@@ -54,7 +58,7 @@ describe('environment variable testing', () => {
       process.env[key] = defaultEnvVars[key];
     });
 
-    expect(monitor()).rejects.toThrow(expectedError);
+    await expect(handler()).rejects.toThrow(expectedError);
   });
 });
 

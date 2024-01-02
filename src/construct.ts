@@ -1,9 +1,9 @@
-import { Duration } from 'aws-cdk-lib';
-import { PolicyStatement } from 'aws-cdk-lib/aws-iam';
-import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
-import { Runtime } from 'aws-cdk-lib/aws-lambda';
+import { Duration, Stack, aws_ec2 } from 'aws-cdk-lib';
 import { Rule, Schedule } from 'aws-cdk-lib/aws-events';
 import { LambdaFunction } from 'aws-cdk-lib/aws-events-targets';
+import { PolicyStatement } from 'aws-cdk-lib/aws-iam';
+import { Architecture, Runtime } from 'aws-cdk-lib/aws-lambda';
+import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { RetentionDays } from 'aws-cdk-lib/aws-logs';
 import { Construct } from 'constructs';
 import { Namer } from 'multi-convention-namer';
@@ -20,14 +20,19 @@ export interface RedisQueueDepthMetricPublisherProps {
    */
   readonly cwNamespace?: string;
   /**
+   * The CloudWatch service to publish metrics to.
+   * @default 'RedisQueueDepthMetricPublisher'
+   */
+  readonly cwService?: string;
+  /**
    * Time intervals that Lambda will be triggered to publish metric in CloudWatch.
    * @default Duration.minutes(1)
    */
   readonly publishFrequency?: Duration;
   /**
-   * List of queues to measure depth for.
+   * List of queue names to measure depth for.
    */
-  readonly queues: string[];
+  readonly queueNames: string[];
   /**
    * Where is Redis?
    */
@@ -54,7 +59,7 @@ export interface RedisQueueDepthMetricPublisherProps {
    * You can override these paths using {@link redisSecretPasswordPath}, and
    * {@link redisSecretUsernamePath} respectively.
    */
-  readonly redisSecretArn: string;
+  readonly redisSecretArn?: string;
   /**
    * In the best possible world, we would be using ABAC to allow decryption of SecretsManager payload.
    * If that is an option, leave this undefined.
@@ -68,13 +73,26 @@ export interface RedisQueueDepthMetricPublisherProps {
    *
    * @default 'password'
    */
-  readonly redisSecretPasswordPath: string;
+  readonly redisSecretPasswordPath?: string;
   /**
    * Override the JSON path for the username in the {@link redisSecretArn}
    *
    * @default 'username'
    */
-  readonly redisSecretUsernamePath: string;
+  readonly redisSecretUsernamePath?: string;
+  /**
+   * The regions to publish metrics to/observe metrics from.
+   * @default ['us-west-2']
+   */
+  readonly regions?: string[];
+  /**
+   * The VPC to run the Lambda in.
+   */
+  readonly vpc?: any;
+  /**
+   * The SecurityGroupId to grant the lambda to access redis clusters
+   */
+  readonly securityGroupId?: string;
 }
 
 /**
@@ -86,6 +104,7 @@ export class RedisQueueDepthMetricPublisher extends Construct {
   readonly handler: NodejsFunction;
   readonly rule: Rule;
   readonly cwNamespace: string;
+  readonly cwService: string;
 
   /**
    * Creates a new instance of RedisQueueDepthMetricPublisher.
@@ -96,8 +115,15 @@ export class RedisQueueDepthMetricPublisher extends Construct {
 
   constructor(scope: Construct, id: Namer, props: RedisQueueDepthMetricPublisherProps) {
     super(scope, id.pascal);
+
+    if (!props.redisSecretArn && (!props.vpc || !props.securityGroupId)) {
+      throw new Error('Either a secretArn or a vpc/securityGroupId must be provided');
+    }
+
     this.publishFrequency = props.publishFrequency ?? Duration.minutes(1);
     this.cwNamespace = props.cwNamespace ?? 'RedisQueueDepth';
+    this.cwService = props.cwService ?? 'RedisQueueDepthMetricPublisher';
+    this.regions = props.regions ?? ['us-west-2'];
     const myConstruct = this;
 
     // Note the name implies where we fetch the code from
@@ -108,16 +134,13 @@ export class RedisQueueDepthMetricPublisher extends Construct {
       },
       logRetention: props.cloudwatchLogsRetention ?? RetentionDays.THREE_MONTHS,
       memorySize: 512,
-      runtime: Runtime.NODEJS_LATEST, // Should be at least node20, but let's be aggressive about this.
+      runtime: Runtime.NODEJS_18_X, // Should be at least node20, but let's be aggressive about this.
       timeout: Duration.seconds(45),
+      architecture: Architecture.ARM_64,
+      ...(props.vpc ? { vpc: props.vpc } : {}),
     });
 
-    [
-      new PolicyStatement({
-        sid: 'fetchRedisSecret',
-        actions: ['WRITEME'],
-        resources: [props.redisSecretArn],
-      }),
+    const policies = [
       new PolicyStatement({
         sid: 'putRedisQueueDepth',
         actions: ['cloudwatch:PutMetricData'],
@@ -128,10 +151,19 @@ export class RedisQueueDepthMetricPublisher extends Construct {
           },
         },
       }),
-    ].forEach((policy) => this.handler.addToRolePolicy(policy));
+    ];
 
+    if (props.redisSecretArn) {
+      policies.push(
+        new PolicyStatement({
+          sid: 'fetchRedisSecret',
+          actions: ['secretsmanager:GetSecretValue'],
+          resources: [props.redisSecretArn],
+        }),
+      );
+    }
     if (props.redisSecretKeyArn) {
-      this.handler.addToRolePolicy(
+      policies.push(
         new PolicyStatement({
           sid: 'decryptRedisSecret',
           actions: ['kms:Decrypt'],
@@ -139,18 +171,33 @@ export class RedisQueueDepthMetricPublisher extends Construct {
         }),
       );
     }
+    policies.forEach((policy) => this.handler.addToRolePolicy(policy));
 
     this.handler
-      .addEnvironment('QUEUES', JSON.stringify(props.queues))
+      .addEnvironment('QUEUE_NAMES', JSON.stringify(props.queueNames))
       .addEnvironment('REDIS_ADDR', props.redisAddr)
       .addEnvironment('REDIS_PORT', props.redisPort ?? '6379')
-      .addEnvironment('REDIS_SECRET_ARN', props.redisSecretArn)
+      .addEnvironment('REDIS_SECRET_ARN', props.redisSecretArn! || '')
       .addEnvironment('REDIS_SECRET_PASSWORD_PATH', props.redisSecretPasswordPath ?? 'password')
       .addEnvironment('REDIS_SECRET_USERNAME_PATH', props.redisSecretUsernamePath ?? 'username')
+      .addEnvironment('CW_SERVICE', props.cwService ?? this.cwService)
+      .addEnvironment('CW_NAMESPACE', props.cwNamespace ?? this.cwNamespace);
+
+    if (props.securityGroupId) {
+      const securityGroup = aws_ec2.SecurityGroup.fromSecurityGroupId(this, 'securityGroup', props.securityGroupId);
+      this.handler.connections.allowTo(securityGroup, aws_ec2.Port.tcp(6379));
+    }
 
     this.rule = new Rule(this, 'rule', {
       schedule: Schedule.rate(this.publishFrequency),
     });
     this.rule.addTarget(new LambdaFunction(this.handler));
+  }
+}
+
+export class RedisQueueDepthMetricPublisherStack extends Stack {
+  constructor(scope: Construct, id: string, props: RedisQueueDepthMetricPublisherProps) {
+    super(scope, id);
+    new RedisQueueDepthMetricPublisher(this, new Namer([id, 'lambda']), props);
   }
 }
