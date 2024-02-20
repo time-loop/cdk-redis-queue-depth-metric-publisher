@@ -53,6 +53,7 @@
     "jsii",
     "standard-version",
     "ts-node",
+    "typescript",
     "aws-cdk-lib",
     "constructs",
     "node",

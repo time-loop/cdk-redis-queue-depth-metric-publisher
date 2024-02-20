@@ -1895,13 +1895,13 @@
     "@smithy/util-buffer-from" "^2.1.1"
     tslib "^2.5.0"
 
-"@time-loop/clickup-projen@^0.0.200":
-  version "0.0.200"
-  resolved "https://npm.pkg.github.com/download/@time-loop/clickup-projen/0.0.200/c73b6672d884715f740957651d4fb11f12c77df2#c73b6672d884715f740957651d4fb11f12c77df2"
-  integrity sha512-NxFvUuYAZlr4QUcM496UbrrqJsBQb0Lij2wgXiBH2icH7BCLBfKbYrNr6hRP+F5rO2gpkWMCCc/BeUD8q7dOuQ==
+"@time-loop/clickup-projen@^1.3.0":
+  version "1.3.0"
+  resolved "https://npm.pkg.github.com/download/@time-loop/clickup-projen/1.3.0/cc212545a4abc701d65d80226e5e1d9fa7c017c2#cc212545a4abc701d65d80226e5e1d9fa7c017c2"
+  integrity sha512-43EY3SEYxH8tgay65X/wiie1AO/bMpteIirRmfyAa99ZvwNzzzqKM2eHRPLyWqynAsdDa/R4Rt9TkLRQIrqzPw==
   dependencies:
     cson-parser "^4.0.9"
-    projen "^0.77.4"
+    projen "^0.78.5"
     semver "^7.5.4"
     ts-deepmerge "^6.2.0"
 
@@ -5448,10 +5448,30 @@ process-nextick-args@~2.0.0:
   resolved "https://registry.yarnpkg.com/process-nextick-args/-/process-nextick-args-2.0.1.tgz#7820d9b16120cc55ca9ae7792680ae7dba6d7fe2"
   integrity sha512-3ouUOpQhtgrbOa17J7+uxOTpITYWaGP7/AhoR3+A+/1e9skrzelGi/dXzEYyvbxubEF6Wn2ypscTKiKJFFn1ag==
 
-projen@^0.77.4, projen@^0.77.6:
+projen@^0.77.6:
   version "0.77.6"
   resolved "https://registry.yarnpkg.com/projen/-/projen-0.77.6.tgz#480c1af4246bba55e8d0732ff7a9d1804ce414be"
   integrity sha512-nXbbDr81UjfLjCfVfHGfGPIjiN7INSyMUa52FYupX0TmybMq+CnvX8o0O45feOLLhsifNq7EHXtF+hgBtpBb8A==
+  dependencies:
+    "@iarna/toml" "^2.2.5"
+    case "^1.6.3"
+    chalk "^4.1.2"
+    comment-json "4.2.2"
+    constructs "^10.0.0"
+    conventional-changelog-config-spec "^2.1.0"
+    fast-json-patch "^3.1.1"
+    glob "^8"
+    ini "^2.0.0"
+    semver "^7.5.4"
+    shx "^0.3.4"
+    xmlbuilder2 "^3.1.1"
+    yaml "^2.2.2"
+    yargs "^17.7.2"
+
+projen@^0.78.5:
+  version "0.78.13"
+  resolved "https://registry.yarnpkg.com/projen/-/projen-0.78.13.tgz#5c6693ababa4f2e7d93759c722a35d41c9c2e691"
+  integrity sha512-ihL1lcfmi7M0EA7qgdXGja2SLLc6vtsQ1Wd2RqqxOuFnchw9/kZubdrxy38J8iI36AEwb0Qucb1uLTuwFhl7Qw==
   dependencies:
     "@iarna/toml" "^2.2.5"
     case "^1.6.3"
@@ -6308,11 +6328,6 @@ typedarray@^0.0.6:
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
   integrity sha512-/aCDEGatGvZ2BIk+HmLf4ifCJFwvKFNb9/JeZPMulfgFracn9QFcAf5GO8B/mweUjSoblS5In0cWhqpfs/5PQA==
 
-typescript@^5.3.3:
-  version "5.3.3"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.3.3.tgz#b3ce6ba258e72e6305ba66f5c9b452aaee3ffe37"
-  integrity sha512-pXWcraxM0uxAS+tN0AG/BF2TyqmHO014Z070UsJ+pFvYuRSq8KH8DmWpnbXe0pEPDHXZV3FcAbJkijJ5oNEnWw==
-
 typescript@next:
   version "5.4.0-dev.20231226"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.4.0-dev.20231226.tgz#fd91b294b23f206271ca32c83c466a8023e19d05"
@@ -6327,6 +6342,11 @@ typescript@~5.0.4:
   version "5.0.4"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.0.4.tgz#b217fd20119bd61a94d4011274e0ab369058da3b"
   integrity sha512-cW9T5W9xY37cc+jfEnaUvX91foxtHkza3Nw3wkoF4sSlKn0MONdkdEndig/qPBWXNkmplh3NzayQzCiHM4/hqw==
+
+typescript@~5.3.0:
+  version "5.3.3"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.3.3.tgz#b3ce6ba258e72e6305ba66f5c9b452aaee3ffe37"
+  integrity sha512-pXWcraxM0uxAS+tN0AG/BF2TyqmHO014Z070UsJ+pFvYuRSq8KH8DmWpnbXe0pEPDHXZV3FcAbJkijJ5oNEnWw==
 
 uglify-js@^3.1.4:
   version "3.17.4"
