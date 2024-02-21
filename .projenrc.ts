@@ -7,7 +7,6 @@ const project = new clickupCdk.ClickUpCdkConstructLibrary({
   cdkVersion: '2.87.0',
   defaultReleaseBranch: 'main',
   devDeps: ['@types/aws-lambda', '@time-loop/clickup-projen', '@aws-cdk/integ-tests-alpha'],
-  jsiiVersion: '~5.0.0',
   name,
   projenrcTs: true,
   repositoryUrl: `https://github.com/time-loop/${name}.git`,
