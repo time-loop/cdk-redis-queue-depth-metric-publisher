@@ -90,24 +90,24 @@
     "@aws-sdk/util-utf8-browser" "^3.0.0"
     tslib "^1.11.1"
 
-"@aws-lambda-powertools/commons@^1.18.1":
-  version "1.18.1"
-  resolved "https://registry.yarnpkg.com/@aws-lambda-powertools/commons/-/commons-1.18.1.tgz#fcfdef39639105a7b2b5363e4bcade9d277f5468"
-  integrity sha512-gFRgQ2GJDghKvf+fXvT0kQVftgOT05W+hCa7RkfZj6HSjVAO+9DZZeJL3JK1HcsLAjWRj7W9ra0/MqB3Abf+PQ==
+"@aws-lambda-powertools/commons@^2.0.3":
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/@aws-lambda-powertools/commons/-/commons-2.0.3.tgz#daa2d05c4a247c5e158d33a7138ed59f3058ef30"
+  integrity sha512-ZuVYhzCkqlMFjAe0mgtNzgIFIJnnd9kZtWO50+YWXhtYK5o9LPHb2drKh8y4mSCIbbaJnbGxMUwas+j1UZl2Uw==
 
-"@aws-lambda-powertools/metrics@^1.18.1":
-  version "1.18.1"
-  resolved "https://registry.yarnpkg.com/@aws-lambda-powertools/metrics/-/metrics-1.18.1.tgz#2d679d87b1d712bc18c6da7c1f46e67b339fcf32"
-  integrity sha512-ebojjuoOlm0bOtZ6H5fyTnC5B0owVX1nNqDUPEQSejkeiiBW0m6DVzy6hFWuKmGtBtm2WNnWwTE//WtF+CD6Ug==
+"@aws-lambda-powertools/metrics@^2.0.3":
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/@aws-lambda-powertools/metrics/-/metrics-2.0.3.tgz#3732708e4e92c9fa04db3cfddc194bea836707bf"
+  integrity sha512-l1XPRCp4tcpyIygzFw1o0tUjzx7W1zg6EJQj6nXjF2UiV31DPSjucjGryHzscyFgh3ut8HZRTKgjAiwzZq/JfQ==
   dependencies:
-    "@aws-lambda-powertools/commons" "^1.18.1"
+    "@aws-lambda-powertools/commons" "^2.0.3"
 
-"@aws-lambda-powertools/parameters@^1.18.1":
-  version "1.18.1"
-  resolved "https://registry.yarnpkg.com/@aws-lambda-powertools/parameters/-/parameters-1.18.1.tgz#89c3ad1de30aff2a1422a605f3bdf02f8bebcc24"
-  integrity sha512-12iJJWIJvBQOzU7RLnbL+CSu7JuMZb00PobI3jvHYxBCKVqsNx347LZG05wVoSaT7LRZGlWVBPd53yl3TafBVA==
+"@aws-lambda-powertools/parameters@^2.0.3":
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/@aws-lambda-powertools/parameters/-/parameters-2.0.3.tgz#be7479ad49b00216f737d24636e1a14a82478878"
+  integrity sha512-/bXJXwHIlBDgcsru31gwRzRpGRVF077ihNgFRKRgCwXCfQ1FsdxcW6qMqaPhuOiwS5dw4wSRByi3ozYfcSy2nA==
   dependencies:
-    "@aws-lambda-powertools/commons" "^1.18.1"
+    "@aws-lambda-powertools/commons" "^2.0.3"
     "@aws-sdk/util-base64-node" "^3.209.0"
 
 "@aws-sdk/client-codeartifact@^3.529.1":
