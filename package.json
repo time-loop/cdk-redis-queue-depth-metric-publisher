@@ -44,7 +44,7 @@
     "@typescript-eslint/parser": "^6",
     "aws-cdk-lib": "2.87.0",
     "constructs": "10.0.5",
-    "esbuild": "^0.20.1",
+    "esbuild": "^0.20.2",
     "eslint": "^8",
     "eslint-config-prettier": "^9.1.0",
     "eslint-import-resolver-typescript": "^3.6.1",
@@ -53,10 +53,10 @@
     "jest": "^29.7.0",
     "jest-junit": "^15",
     "jsii": "~5.3.0",
-    "jsii-diff": "^1.95.0",
-    "jsii-docgen": "^10.3.22",
-    "jsii-pacmak": "^1.95.0",
-    "jsii-release": "^0.2.803",
+    "jsii-diff": "^1.96.0",
+    "jsii-docgen": "^10.3.25",
+    "jsii-pacmak": "^1.96.0",
+    "jsii-release": "^0.2.809",
     "jsii-rosetta": "~5.3.0",
     "multi-convention-namer": "0.1.15",
     "prettier": "^3.2.5",
@@ -74,7 +74,7 @@
   "dependencies": {
     "@aws-lambda-powertools/metrics": "^1.18.1",
     "@aws-lambda-powertools/parameters": "^1.18.1",
-    "@aws-sdk/client-secrets-manager": "^3.533.0",
+    "@aws-sdk/client-secrets-manager": "^3.543.0",
     "ioredis": "^5.3.2"
   },
   "bundledDependencies": [
