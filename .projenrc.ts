@@ -1,4 +1,5 @@
 import { clickupCdk } from '@time-loop/clickup-projen';
+import { javascript } from 'projen';
 
 const name = 'cdk-redis-queue-depth-metric-publisher';
 const project = new clickupCdk.ClickUpCdkConstructLibrary({
@@ -9,6 +10,8 @@ const project = new clickupCdk.ClickUpCdkConstructLibrary({
   devDeps: ['@types/aws-lambda', '@time-loop/clickup-projen', '@aws-cdk/integ-tests-alpha'],
   name,
   projenrcTs: true,
+  packageManager: javascript.NodePackageManager.PNPM,
+  pnpmVersion: '9',
   repositoryUrl: `https://github.com/time-loop/${name}.git`,
   gitignore: ['.vscode/**'],
   bundledDeps: [
@@ -19,4 +22,7 @@ const project = new clickupCdk.ClickUpCdkConstructLibrary({
   ],
   peerDeps: ['multi-convention-namer'],
 });
+
+project.npmrc.addConfig('node-linker', 'hoisted'); // PNPM support for bundledDeps https://pnpm.io/npmrc#node-linker
+
 project.synth();
