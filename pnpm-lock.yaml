@@ -9,11 +9,11 @@ importers:
   .:
     dependencies:
       '@aws-lambda-powertools/metrics':
-        specifier: ^1.18.1
-        version: 1.18.1
+        specifier: ^2.25.2
+        version: 2.25.2
       '@aws-lambda-powertools/parameters':
-        specifier: ^1.18.1
-        version: 1.18.1(@aws-sdk/client-secrets-manager@3.574.0)
+        specifier: ^2.25.2
+        version: 2.25.2(@aws-sdk/client-secrets-manager@3.574.0)
       '@aws-sdk/client-secrets-manager':
         specifier: ^3.533.0
         version: 3.574.0
@@ -152,29 +152,26 @@ packages:
   '@aws-crypto/util@3.0.0':
     resolution: {integrity: sha512-2OJlpeJpCR48CC8r+uKVChzs9Iungj9wkZrl8Z041DWEWvyIHILYKCPNzJghKsivj+S3mLo6BVc7mBNzdxA46w==}
 
-  '@aws-lambda-powertools/commons@1.18.1':
-    resolution: {integrity: sha512-gFRgQ2GJDghKvf+fXvT0kQVftgOT05W+hCa7RkfZj6HSjVAO+9DZZeJL3JK1HcsLAjWRj7W9ra0/MqB3Abf+PQ==}
-    deprecated: 'Version 1.x has reached End-of-Life, please upgrade to 2.x, more info here: https://s12d.com/upgrade-v2'
+  '@aws-lambda-powertools/commons@2.25.2':
+    resolution: {integrity: sha512-4ooALCWDB0hBmpKfP4Ttt/Z3LJh2pdoHLc4vjm6sbqbanLiOofgFrdaJLj55StiANHoayotZA9tmuzlNxqwE9w==}
 
-  '@aws-lambda-powertools/metrics@1.18.1':
-    resolution: {integrity: sha512-ebojjuoOlm0bOtZ6H5fyTnC5B0owVX1nNqDUPEQSejkeiiBW0m6DVzy6hFWuKmGtBtm2WNnWwTE//WtF+CD6Ug==}
-    deprecated: 'Version 1.x has reached End-of-Life, please upgrade to 2.x, more info here: https://s12d.com/upgrade-v2'
+  '@aws-lambda-powertools/metrics@2.25.2':
+    resolution: {integrity: sha512-Tdu+I/rpqH1EmcaWeRlQLVnX/hydzbqPOE/Nqxzdip3pxQv26iXC4kEqixRlg9ODY9kmcMvZHdRD0zGL4YItrg==}
     peerDependencies:
-      '@middy/core': '>=3.x'
+      '@middy/core': 4.x || 5.x || 6.x
     peerDependenciesMeta:
       '@middy/core':
         optional: true
 
-  '@aws-lambda-powertools/parameters@1.18.1':
-    resolution: {integrity: sha512-12iJJWIJvBQOzU7RLnbL+CSu7JuMZb00PobI3jvHYxBCKVqsNx347LZG05wVoSaT7LRZGlWVBPd53yl3TafBVA==}
-    deprecated: 'Version 1.x has reached End-of-Life, please upgrade to 2.x, more info here: https://s12d.com/upgrade-v2'
+  '@aws-lambda-powertools/parameters@2.25.2':
+    resolution: {integrity: sha512-8NJQWANzlZT4jwxop24tNACmxZyokqB9tWmWD9tXPHZnI83QvHtXAt3DbI98AdWTBud9P0WCWtYs+l8hQI9yuw==}
     peerDependencies:
       '@aws-sdk/client-appconfigdata': '>=3.x'
       '@aws-sdk/client-dynamodb': '>=3.x'
       '@aws-sdk/client-secrets-manager': '>=3.x'
       '@aws-sdk/client-ssm': '>=3.x'
       '@aws-sdk/util-dynamodb': '>=3.x'
-      '@middy/core': '>=3.x'
+      '@middy/core': 4.x || 5.x || 6.x
     peerDependenciesMeta:
       '@aws-sdk/client-appconfigdata':
         optional: true
@@ -257,10 +254,6 @@ packages:
     resolution: {integrity: sha512-DsHH2ks45gXXNjO5OM74Q1khgfJopztqQsqixjyZyojVu+pF+OMIGvkJlJfRxb3LKNK3gtuSGdv4PNoeRTGe7Q==}
     engines: {node: '>=16.0.0'}
 
-  '@aws-sdk/is-array-buffer@3.201.0':
-    resolution: {integrity: sha512-UPez5qLh3dNgt0DYnPD/q0mVJY84rA17QE26hVNOW3fAji8W2wrwrxdacWOxyXvlxWsVRcKmr+lay1MDqpAMfg==}
-    engines: {node: '>=14.0.0'}
-
   '@aws-sdk/middleware-host-header@3.567.0':
     resolution: {integrity: sha512-zQHHj2N3in9duKghH7AuRNrOMLnKhW6lnmb7dznou068DJtDr76w475sHp2TF0XELsOGENbbBsOlN/S5QBFBVQ==}
     engines: {node: '>=16.0.0'}
@@ -290,15 +283,6 @@ packages:
   '@aws-sdk/types@3.567.0':
     resolution: {integrity: sha512-JBznu45cdgQb8+T/Zab7WpBmfEAh77gsk99xuF4biIb2Sw1mdseONdoGDjEJX57a25TzIv/WUJ2oABWumckz1A==}
     engines: {node: '>=16.0.0'}
-
-  '@aws-sdk/util-base64-node@3.209.0':
-    resolution: {integrity: sha512-U6pjb6uF/BameQLmzoSrqeiTxu5otwwGV7fO+TyE/3SJm/lyIsBaO+wr0qsoK0ae1VqggR+KCsUG13pWhdltpw==}
-    engines: {node: '>=14.0.0'}
-    deprecated: The package @aws-sdk/util-base64-node has been renamed to @aws-sdk/util-base64. Please install the renamed package.
-
-  '@aws-sdk/util-buffer-from@3.208.0':
-    resolution: {integrity: sha512-7L0XUixNEFcLUGPeBF35enCvB9Xl+K6SQsmbrPk1P3mlV9mguWSDQqbOBwY1Ir0OVbD6H/ZOQU7hI/9RtRI0Zw==}
-    engines: {node: '>=14.0.0'}
 
   '@aws-sdk/util-endpoints@3.572.0':
     resolution: {integrity: sha512-AIEC7ItIWBqkJLtqcSd0HG8tvdh3zVwqnKPHNrcfFay0Xonqx3p/qTCDwGosh5CM5hDGzyOSRA5PkacEDBTz9w==}
@@ -3670,16 +3654,15 @@ snapshots:
       '@aws-sdk/util-utf8-browser': 3.259.0
       tslib: 1.14.1
 
-  '@aws-lambda-powertools/commons@1.18.1': {}
+  '@aws-lambda-powertools/commons@2.25.2': {}
 
-  '@aws-lambda-powertools/metrics@1.18.1':
+  '@aws-lambda-powertools/metrics@2.25.2':
     dependencies:
-      '@aws-lambda-powertools/commons': 1.18.1
+      '@aws-lambda-powertools/commons': 2.25.2
 
-  '@aws-lambda-powertools/parameters@1.18.1(@aws-sdk/client-secrets-manager@3.574.0)':
+  '@aws-lambda-powertools/parameters@2.25.2(@aws-sdk/client-secrets-manager@3.574.0)':
     dependencies:
-      '@aws-lambda-powertools/commons': 1.18.1
-      '@aws-sdk/util-base64-node': 3.209.0
+      '@aws-lambda-powertools/commons': 2.25.2
     optionalDependencies:
       '@aws-sdk/client-secrets-manager': 3.574.0
 
@@ -4083,10 +4066,6 @@ snapshots:
       - '@aws-sdk/client-sso-oidc'
       - aws-crt
 
-  '@aws-sdk/is-array-buffer@3.201.0':
-    dependencies:
-      tslib: 2.6.2
-
   '@aws-sdk/middleware-host-header@3.567.0':
     dependencies:
       '@aws-sdk/types': 3.567.0
@@ -4136,16 +4115,6 @@ snapshots:
   '@aws-sdk/types@3.567.0':
     dependencies:
       '@smithy/types': 2.12.0
-      tslib: 2.6.2
-
-  '@aws-sdk/util-base64-node@3.209.0':
-    dependencies:
-      '@aws-sdk/util-buffer-from': 3.208.0
-      tslib: 2.6.2
-
-  '@aws-sdk/util-buffer-from@3.208.0':
-    dependencies:
-      '@aws-sdk/is-array-buffer': 3.201.0
       tslib: 2.6.2
 
   '@aws-sdk/util-endpoints@3.572.0':
